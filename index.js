@@ -2,6 +2,7 @@ const express = require('express')
 const models = require('./models')
 
 let app = express()
+app.use(express.json())
 
 app.get('/rebels', (request, response) => {
   models.Rebels.findAll().then((rebels) => {
@@ -10,12 +11,13 @@ app.get('/rebels', (request, response) => {
 })
 
 app.get('/rebels/:identifier', (request, response) => {
-  if (typeof request.params.identifier === 'integer') {
+  // type of "integer"
+  if (typeof request.params.identifier === Number) {
     models.Rebels.findAll({ where: { id: request.params.identifier }, }).then((rebel) => {
       response.send(rebel)
     })
   } else {
-    models.Rebels.findAll({ where: { callSign: request.params.identifier }, }).then((rebel) => {
+    models.Rebels.findAll({ where: { id: request.params.identifier }, }).then((rebel) => {
       response.send(rebel)
     })
   }
@@ -28,7 +30,7 @@ app.post('/rebels', (request, response) => {
     response.status(400).send('The following attributes are required: name, callSign, rank')
   }
 
-  models.Heroes.create({ name, callSign, rank }).then((newRebel) => {
+  models.Rebels.create({ name, callSign, rank }).then((newRebel) => {
     response.status(201).send(newRebel)
   })
 })
